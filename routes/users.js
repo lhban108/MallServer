@@ -67,7 +67,7 @@ router.post('/login', (req, res, next) => {
       }
     }
   })
-})
+});
 
 // 登出
 router.post('/logOut', (req, res, next) => {
@@ -84,6 +84,107 @@ router.post('/logOut', (req, res, next) => {
     msg: '登出成功！',
     result: {}
   })
-})
+});
+
+// 注册
+router.post('/signIn', (req, res, next) => {
+  UsersModel.findOne({
+    userName: req.body.userName,
+  }, (usersErr, usersDoc) => {
+    if (usersErr) {
+      res.json({
+        status: 'error',
+        msg: usersErr.message
+      })
+    } else {
+      if (usersDoc) {
+        res.json({
+          status: 'exist',
+          msg: '该用户名已存在',
+          result: ''
+        })
+      } else {
+        let newUserId = '1' + Math.ceil(Math.random()*100000)      
+        UsersModel.findOne({
+          userId: newUserId
+        }, (newUserErr, newUserDoc) => {
+          if (newUserErr) {
+            res.json({
+              status: 'error',
+              msg: newUserErr.message,
+              result: ''
+            })
+          } else {
+            if (newUserErr) {
+              newUserId = '1' + Math.ceil(Math.random()*100000)
+            }
+            const newUserMsg = {
+              "userId": newUserId,
+              "userName": req.body.userName,
+              "userPwd": req.body.userPwd,
+              "userTel": req.body.userTel
+            }
+            let newUser = new UsersModel(newUserMsg)
+            newUser.save((addUserErr, addUserDoc) => {
+              if (addUserErr) {
+                res.json({
+                  status: 'error',
+                  msg: addUserErr.message
+                })
+              } else {
+                res.json({
+                  status: 'success',
+                  msg: '注册成功',
+                  result: ''
+                })
+              }
+            })
+          }
+        })
+
+
+
+        // let newUser = new UsersModel({
+        //   "userId": '1000086',
+        //   "userName": req.body.userName,
+        //   "userPwd": req.body.userPwd,
+        //   "userTel": req.body.userTel
+        // })
+        // newUser.save((addUserErr, addUserDoc) => {
+        //   if (addUserErr) {
+        //     res.json({
+        //       status: 'error',
+        //       msg: addUserErr.message
+        //     })
+        //   } else {
+        //     res.json({
+        //       status: 'success',
+        //       msg: '注册成功',
+        //       result: ''
+        //     })
+        //   }
+        // })
+      }
+    }
+  })
+});
+
+const addUser = function (newUserMsg) { 
+  let newUser = new UsersModel(newUserMsg)
+  newUser.save((addUserErr, addUserDoc) => {
+    if (addUserErr) {
+      res.json({
+        status: 'error',
+        msg: addUserErr.message
+      })
+    } else {
+      res.json({
+        status: 'success',
+        msg: '注册成功',
+        result: ''
+      })
+    }
+  })
+}
 
 module.exports = router;

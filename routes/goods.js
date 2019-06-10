@@ -102,7 +102,7 @@ router.get("/getGoodsList", (req, res, next) => {
 // 加入到购物车
 router.post("/addCart", (req, res, next) => {
   setTimeout(() => {
-    const userId = "100000077";
+    const userId = req.cookies.userId;
     const productId = req.body.productId;
     // 获取用户模型,通过模型执行API保存数据
     const userModel = require('../models/users');

@@ -29,12 +29,15 @@ app.use(function(req, res, next) {
   if (req.cookies.userId) {
     next()
   } else {
-    if (req.originalUrl === '/users/login' || req.originalUrl === '/users/logout' || req.path === '/goods/getGoodsList') {
+    if (req.originalUrl === '/users/login' 
+      || req.originalUrl === '/users/logout' 
+      || req.originalUrl === '/users/signIn' 
+      || req.path === '/goods/getGoodsList') {
       next()
     } else {
       res.json({
         status: "noLogin",
-        msg: "当前为登陆,请登陆后重试",
+        msg: "当前未登陆,请登陆后重试",
         result: {}
       })
     }
