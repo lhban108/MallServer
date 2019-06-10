@@ -169,22 +169,5 @@ router.post('/signIn', (req, res, next) => {
   })
 });
 
-const addUser = function (newUserMsg) { 
-  let newUser = new UsersModel(newUserMsg)
-  newUser.save((addUserErr, addUserDoc) => {
-    if (addUserErr) {
-      res.json({
-        status: 'error',
-        msg: addUserErr.message
-      })
-    } else {
-      res.json({
-        status: 'success',
-        msg: '注册成功',
-        result: ''
-      })
-    }
-  })
-}
 
 module.exports = router;

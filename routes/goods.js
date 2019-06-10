@@ -174,4 +174,71 @@ router.post("/addCart", (req, res, next) => {
   }, 2500)
 })
 
+
+// 根据用户id获取购物车数据
+router.get('/getCartList', (req, res, next) => {
+  const userId = req.cookies.userId;
+  if (!userId) {
+    res.json({
+      status: "noLogin",
+      msg: "当前未登陆,请登陆后重试",
+      result: {}
+    })
+  } else {
+    const userModel = require('../models/users');
+    userModel.findOne({userId: userId}, (userErr, userDoc) => {
+      if (userErr) {
+        res.json({
+          status: "error",
+          msg: userErr.message,
+          result: ''
+        })
+      } else {
+        res.json({
+          status: "success",
+          msg: '',
+          result: userDoc.cartList
+        })
+      }
+    })
+  }
+});
+
+// 购物车修改商品数量
+router.post('/changeCartNum', (req, res, next) => {
+  const userId = req.cookies.userId;
+  const productId = req.body.productId;
+  // 获取用户模型,通过模型执行API保存数据
+  const userModel = require('../models/users');
+  userModel.findOne({userId: userId}, (userErr, userDoc) => {
+    if (userErr) {
+      res.json({
+        status: "error",
+        msg: userErr.message
+      })
+    } else {
+      if (userDoc) {
+        userDoc.cartList.forEach((item, index) => {
+          if (item.productId === productId) {
+            item.productNum = req.body.productNum ;
+          }
+        })
+        userDoc.save((saveErr, saveDoc) => {
+          if (saveErr) {
+            res.json({
+              status: "error",
+              msg: saveErr.message
+            })
+          } else {
+            res.json({
+              status: "success",
+              msg: "",
+              result: "add success"
+            })
+          }
+        });
+      }
+    }
+  })
+})
 module.exports = router
