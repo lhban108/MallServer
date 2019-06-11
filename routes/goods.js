@@ -171,37 +171,39 @@ router.post("/addCart", (req, res, next) => {
         }
       }
     })
-  }, 2500)
+  }, 1500)
 })
 
 
 // 根据用户id获取购物车数据
 router.get('/getCartList', (req, res, next) => {
-  const userId = req.cookies.userId;
-  if (!userId) {
-    res.json({
-      status: "noLogin",
-      msg: "当前未登陆,请登陆后重试",
-      result: {}
-    })
-  } else {
-    const userModel = require('../models/users');
-    userModel.findOne({userId: userId}, (userErr, userDoc) => {
-      if (userErr) {
-        res.json({
-          status: "error",
-          msg: userErr.message,
-          result: ''
-        })
-      } else {
-        res.json({
-          status: "success",
-          msg: '',
-          result: userDoc.cartList
-        })
-      }
-    })
-  }
+  setTimeout(_ => {
+    const userId = req.cookies.userId;
+    if (!userId) {
+      res.json({
+        status: "noLogin",
+        msg: "当前未登陆,请登陆后重试",
+        result: {}
+      })
+    } else {
+      const userModel = require('../models/users');
+      userModel.findOne({userId: userId}, (userErr, userDoc) => {
+        if (userErr) {
+          res.json({
+            status: "error",
+            msg: userErr.message,
+            result: ''
+          })
+        } else {
+          res.json({
+            status: "success",
+            msg: '',
+            result: userDoc.cartList
+          })
+        }
+      })
+    }
+  }, 1500)
 });
 
 // 购物车修改商品数量
@@ -240,5 +242,102 @@ router.post('/changeCartNum', (req, res, next) => {
       }
     }
   })
-})
+});
+
+// 删除购物车物品
+router.post('/removeGoods', (req, res, next) => {
+  setTimeout(_ => {
+    const userId = req.cookies.userId;
+    const userModel = require('../models/users');
+    userModel.findOne({userId: userId}, (userErr, userDoc) => {
+      if (userErr) {
+        res.json({
+          status: "error",
+          msg: userErr.message,
+          result:''
+        })
+      } else {
+        if (!userDoc) {
+          res.json({
+            status: "notFind",
+            msg: '',
+            result:''
+          })
+        } else {
+          const productId = req.body.productId;
+          for (let index = 0; index < userDoc.cartList.length; index++) {
+            if (productId === userDoc.cartList[index].productId) {
+              userDoc.cartList.splice(index, 1);
+              break;
+            }
+          }
+          userDoc.save((removeErr, removeDoc) => {
+            if (removeErr) {
+              res.json({
+                status: "error",
+                msg: removeErr.message,
+                result: ''
+              })
+            } else {
+              res.json({
+                status: "success",
+                msg: '删除成功',
+                result: '删除成功'
+              })
+            }
+          })
+        }
+      }
+    })
+  },1500)
+});
+
+// 改变物品选中状态
+router.post('/changeChecked', (req, res, next) => {
+  const userId = req.cookies.userId;
+  const userModel = require('../models/users');
+  userModel.findOne({userId: userId}, (userErr, userDoc) => {
+    if (userErr) {
+      res.json({
+        status: "error",
+        msg: userErr.message,
+        result:''
+      })
+    } else {
+      if (!userDoc) {
+        res.json({
+          status: "notFind",
+          msg: '',
+          result:''
+        })
+      } else {
+        for (let index = 0; index < userDoc.cartList.length; index++) {
+          if (req.body.checkedAll === '0' || req.body.checkedAll === '1') {
+            userDoc.cartList[index].checked = req.body.checkedAll
+          } else {
+            if (req.body.productId === userDoc.cartList[index].productId) {
+              userDoc.cartList[index].checked = req.body.checked;
+              break
+            }
+          }
+        }
+        userDoc.save((saveErr,  saveDoc) => {
+          if (saveErr) {
+            res.json({
+              status: "error",
+              msg: saveErr.message,
+              result: ''
+            })
+          } else {
+            res.json({
+              status: "success",
+              msg: '操作成功',
+              result: '操作成功'
+            })
+          }
+        }) 
+      }
+    }
+  })
+});
 module.exports = router
