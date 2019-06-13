@@ -62,7 +62,7 @@ router.get("/getGoodsList", (req, res, next) => {
   }
   let totalCount = 0
   // 查询总条数
-  let allGoodsModelResult = GoodsModule.find({});
+  let allGoodsModelResult = GoodsModule.find(params);
   allGoodsModelResult.exec((err, doc) => {
     if (err) {
       res.json({
