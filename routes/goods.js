@@ -15,6 +15,7 @@ mongoose.connection.on("connected", _ => {
 // 数据库连接出错
 mongoose.connection.on("error", _ => {
   console.log('error>>>>>>>>>>>>>>', 'MongoDB connected error!')
+  console.log('error>>>>>>>>>>>>>>', 'MongoDB connected error22!')
 })
 
 // 断开连接
