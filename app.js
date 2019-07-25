@@ -9,6 +9,7 @@ var ejs = require('ejs')
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var goodsRouter = require('./routes/goods');
+var dragRouter = require('./routes/drag');
 
 var app = express();
 
@@ -26,6 +27,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // 未登陆拦截
 app.use(function(req, res, next) {
+  console.log('1111', req.path)
   if (req.cookies.userId) {
     next()
   } else {
@@ -33,7 +35,9 @@ app.use(function(req, res, next) {
       || req.originalUrl === '/users/logout' 
       || req.originalUrl === '/users/signIn' 
       || req.path === '/goods/getCartList' 
-      || req.path === '/goods/getGoodsList') {
+      || req.path === '/goods/getGoodsList'
+      || req.path === '/drags/getDragInfo'
+      || req.path === '/drags/saveDragInfo') {
       next()
     } else {
       res.json({
@@ -48,6 +52,7 @@ app.use(function(req, res, next) {
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/goods', goodsRouter);
+app.use('/drags', dragRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
