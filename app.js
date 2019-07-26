@@ -27,7 +27,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // 未登陆拦截
 app.use(function(req, res, next) {
-  console.log('1111', req.path)
+  console.log('当前访问path: ', req.path)
   if (req.cookies.userId) {
     next()
   } else {

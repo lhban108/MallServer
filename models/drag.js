@@ -13,7 +13,8 @@ var dragSchema = new Schema(({
     "dragHeight": Number,
     "dragColX": Number,
     "dragColY": Number,
-    "pageNum": Number
+    "pageNum": Number,
+    "classFlag": String
   }]
 }))
 
